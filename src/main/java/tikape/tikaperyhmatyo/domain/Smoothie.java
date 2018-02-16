@@ -1,12 +1,17 @@
 
 package tikape.tikaperyhmatyo.domain;
 
+import java.util.List;
+
 public class Smoothie {
     private Integer id;
     private String name;
+    private List<Ingredient> ingredients;
     
-    public Smoothie(Integer id, String name) {
+    public Smoothie(Integer id, String name, List<Ingredient> ingredients) {
+        this.id = id;
         this.name = name;
+        this.ingredients = ingredients;
     }
 
     public Integer getId() {
@@ -23,6 +28,14 @@ public class Smoothie {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 
 }

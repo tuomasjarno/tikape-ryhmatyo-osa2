@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import tikape.tikaperyhmatyo.db.Database;
+import tikape.tikaperyhmatyo.domain.Ingredient;
 import tikape.tikaperyhmatyo.domain.Smoothie;
 
 public class SmoothieDao implements Dao<Smoothie, Integer> {
@@ -27,9 +28,11 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         List<Smoothie> smoothies = new ArrayList<>();
         
         try (Connection connection = this.db.getConnection()) {
-            ResultSet rs = connection.prepareStatement("SELECT id, name FROM Smoothie").executeQuery();
+            ResultSet rs = connection.prepareStatement("SELECT DISTINCT Smoothie.id, Smoothie.name,  FROM Smoothie").executeQuery();
             while (rs.next()) {
-                smoothies.add(new Smoothie(rs.getInt("id"), rs.getString("name")));
+                List<Ingredient> ingredients = new ArrayList<>();
+                //ingredients.add(new )
+                //smoothies.add(new Smoothie(rs.getInt("Smoothie.id"), rs.getString("Smoothie.name"), ));
             }
         }
         
