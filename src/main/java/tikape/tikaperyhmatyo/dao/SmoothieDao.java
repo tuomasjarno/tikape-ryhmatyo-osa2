@@ -30,9 +30,8 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         try (Connection connection = this.db.getConnection()) {
             ResultSet rs = connection.prepareStatement("SELECT DISTINCT Smoothie.id, Smoothie.name,  FROM Smoothie").executeQuery();
             while (rs.next()) {
-                List<Ingredient> ingredients = new ArrayList<>();
-                //ingredients.add(new )
-                //smoothies.add(new Smoothie(rs.getInt("Smoothie.id"), rs.getString("Smoothie.name"), ));
+                List<Ingredient> ingredients = iDao.findAll(); // iDao = IngredientDao joka palauttaa raakaaine listan
+                smoothies.add(new Smoothie(rs.getInt("Smoothie.id"), rs.getString("Smoothie.name"), ingredients));
             }
         }
         
