@@ -8,7 +8,7 @@
     <body>
         <h1>Smoothie list</h1>
         <ul>
-            <li th:each="${smoothies}">
+            <li th:each="smoothie: ${smoothies}">
                 <span th:text="${smoothie.name}"></span>
             </li>
         </ul>

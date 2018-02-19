@@ -7,11 +7,13 @@ public class Smoothie {
     private Integer id;
     private String name;
     private List<Ingredient> ingredients;
+    private String recipe;
     
-    public Smoothie(Integer id, String name, List<Ingredient> ingredients) {
+    public Smoothie(Integer id, String name, List<Ingredient> ingredients, String recipe) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
+        this.recipe = recipe;
     }
 
     public Integer getId() {

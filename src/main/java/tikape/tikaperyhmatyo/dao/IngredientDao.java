@@ -27,11 +27,11 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         List<Ingredient> ingredients = new ArrayList<>();
         
         Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("");
+        PreparedStatement statement = connection.prepareStatement("SELECT Ingredient.id, Ingredient.name, SmoothieIngredient.pieces, SmoothieIngredient.order_of FROM Ingredient, SmoothieIngredient WHERE Ingredient.id = SmoothieIngredient.ingredient_id");
         ResultSet rs = statement.executeQuery();
         
         while (rs.next()) {
-            ingredients.add(new Ingredient(rs.getInt("id"), rs.getString("name"), rs.getInt("howMany")));
+            ingredients.add(new Ingredient(rs.getInt("Ingredient.id"), rs.getString("Ingredient.name"), rs.getInt("SmoothieIngredient.order"), rs.getInt("SmoothieIngredient.pieces")));
         }
         
         //muista lisätä connection.close() jne

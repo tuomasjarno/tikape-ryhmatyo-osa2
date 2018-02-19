@@ -4,12 +4,14 @@ package tikape.tikaperyhmatyo.domain;
 public class Ingredient {
     private Integer id;
     private String name;
-    private Integer howMany;
+    private Integer orderOf;
+    private Integer pieces;
     
-    public Ingredient(Integer id, String name, Integer howMany) {
+    public Ingredient(Integer id, String name, Integer orderOf, Integer pieces) {
         this.id = id;
         this.name = name;
-        this.howMany = howMany;
+        this.orderOf = orderOf;
+        this.pieces = pieces;
     }
 
     public Integer getId() {
@@ -28,12 +30,20 @@ public class Ingredient {
         this.name = name;
     }
 
-    public Integer getHowMany() {
-        return howMany;
+    public Integer getOrderOf() {
+        return orderOf;
     }
 
-    public void setHowMany(Integer howMany) {
-        this.howMany = howMany;
+    public void setOrderOf(Integer orderOf) {
+        this.orderOf = orderOf;
+    }
+
+    public Integer getPieces() {
+        return this.pieces;
+    }
+
+    public void setPieces(Integer pieces) {
+        this.pieces = pieces;
     }
     
 }
