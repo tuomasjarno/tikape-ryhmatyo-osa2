@@ -1,13 +1,10 @@
 package tikape.tikaperyhmatyo.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 import tikape.tikaperyhmatyo.db.Database;
 import tikape.tikaperyhmatyo.domain.Ingredient;
+import tikape.tikaperyhmatyo.domain.SmoothieIngredient;
 
 public class IngredientDao implements Dao<Ingredient, Integer> {
 
@@ -18,8 +15,18 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     }
 
     @Override
-    public Ingredient findOne(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Ingredient findOne(Integer ingredientId) throws SQLException {
+        Ingredient ingredient = null;
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Ingredient WHERE id = (?)");
+            statement.setInt(1, ingredientId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                ingredient = new Ingredient(rs.getInt("id"), rs.getString("name"));
+            } 
+        }
+        
+        return ingredient;
     }
 
     @Override
@@ -33,6 +40,20 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             }
         }
         //muista lisätä connection.close() jne
+        return ingredients;
+    }
+
+    public List<Ingredient> findSmoothieIngredients(List<SmoothieIngredient> smoothieIngredients) throws SQLException {
+        List<Ingredient> ingredients = new ArrayList<>();
+
+        try (Connection connection = this.db.getConnection()) {
+            for (SmoothieIngredient si : smoothieIngredients) {
+                if (this.findOne(si.getIngredientId()) != null) {
+                    ingredients.add(this.findOne(si.getIngredientId()));
+                }
+            }
+        }
+
         return ingredients;
     }
 
