@@ -10,14 +10,17 @@ import java.util.List;
 import tikape.tikaperyhmatyo.db.Database;
 import tikape.tikaperyhmatyo.domain.Ingredient;
 import tikape.tikaperyhmatyo.domain.Smoothie;
+import tikape.tikaperyhmatyo.domain.SmoothieIngredient;
 
 public class SmoothieDao implements Dao<Smoothie, Integer> {
     private Database db;
     private IngredientDao iDao;
+    private SmoothieIngredientDao siDao;
     
     public SmoothieDao(Database db) {
         this.db = db;
         this.iDao = new IngredientDao(this.db);
+        this.siDao = new SmoothieIngredientDao(this.db);
     }
 
     @Override
@@ -30,10 +33,11 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         List<Smoothie> smoothies = new ArrayList<>();
         
         try (Connection connection = this.db.getConnection()) {
-            ResultSet rs = connection.prepareStatement("SELECT DISTINCT Smoothie.id, Smoothie.name, SmoothieIngredient.recipe FROM Smoothie, SmoothieIngredient WHERE Smoothie.id = SmoothieIngredient.smoothie_id").executeQuery();
+            ResultSet rs = connection.prepareStatement("SELECT id, name FROM Smoothie").executeQuery();
             while (rs.next()) {
-                List<Ingredient> ingredients = iDao.findAll(); // iDao = IngredientDao joka palauttaa raakaaine listan
-                smoothies.add(new Smoothie(rs.getInt("Smoothie.id"), rs.getString("Smoothie.name"), ingredients, rs.getString("SmoothieIngredient.recipe")));
+                List<Ingredient> ingredients = iDao.findAll();
+                List<SmoothieIngredient> smoothieIngredients = siDao.findAll();
+                smoothies.add(new Smoothie(rs.getInt("id"), rs.getString("name")));
             }
         }
         

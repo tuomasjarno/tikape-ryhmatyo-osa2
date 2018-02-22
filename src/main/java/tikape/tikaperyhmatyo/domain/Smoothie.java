@@ -9,7 +9,7 @@ public class Smoothie {
     private List<Ingredient> ingredients;
     private String recipe;
     
-    public Smoothie(Integer id, String name, List<Ingredient> ingredients, String recipe) {
+    public Smoothie(Integer id, String name) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;

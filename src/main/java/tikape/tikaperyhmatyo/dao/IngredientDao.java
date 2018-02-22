@@ -1,4 +1,3 @@
-
 package tikape.tikaperyhmatyo.dao;
 
 import java.sql.Connection;
@@ -11,8 +10,9 @@ import tikape.tikaperyhmatyo.db.Database;
 import tikape.tikaperyhmatyo.domain.Ingredient;
 
 public class IngredientDao implements Dao<Ingredient, Integer> {
+
     private Database db;
-    
+
     public IngredientDao(Database db) {
         this.db = db;
     }
@@ -25,15 +25,13 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     @Override
     public List<Ingredient> findAll() throws SQLException {
         List<Ingredient> ingredients = new ArrayList<>();
-        
-        Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT Ingredient.id, Ingredient.name, SmoothieIngredient.pieces, SmoothieIngredient.order_of FROM Ingredient, SmoothieIngredient WHERE Ingredient.id = SmoothieIngredient.ingredient_id");
-        ResultSet rs = statement.executeQuery();
-        
-        while (rs.next()) {
-            ingredients.add(new Ingredient(rs.getInt("Ingredient.id"), rs.getString("Ingredient.name"), rs.getInt("SmoothieIngredient.order"), rs.getInt("SmoothieIngredient.pieces")));
+
+        try (Connection connection = this.db.getConnection()) {
+            ResultSet rs = connection.prepareStatement("SELECT id, name FROM Ingredient").executeQuery();
+            while (rs.next()) {
+                ingredients.add(new Ingredient(rs.getInt("id"), rs.getString("name")));
+            }
         }
-        
         //muista lisätä connection.close() jne
         return ingredients;
     }
