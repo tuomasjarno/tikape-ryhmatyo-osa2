@@ -47,9 +47,8 @@ public class SmoothieIngredientDao implements Dao<SmoothieIngredient, Integer> {
         List<SmoothieIngredient> smoothieIngredients = new ArrayList<>();
 
         try (Connection connection = this.db.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM SmoothieIngredient WHERE (smoothie_id IN (SELECT * FROM Smoothie WHERE id = (?)))"); //AND ingredient_id IN (SELECT * FROM Ingredient WHERE id = (?))
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM SmoothieIngredient WHERE smoothie_id IN (SELECT id FROM Smoothie WHERE id = (?))");
             statement.setInt(1, smoothieId);
-            //statement.setInt(2, ingredientId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 smoothieIngredients.add(new SmoothieIngredient(rs.getInt("smoothie_id"), rs.getInt("ingredient_id"), rs.getInt("order_of"), rs.getString("quantity"), rs.getString("recipe")));
