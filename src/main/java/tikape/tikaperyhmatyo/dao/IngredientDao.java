@@ -58,13 +58,39 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     }
 
     @Override
-    public Ingredient saveOrUpdate(Ingredient object) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Ingredient saveOrUpdate(Ingredient ingredient) throws SQLException {
+        if (this.findOne(ingredient.getId()) == null) {
+            return this.save(ingredient);
+        } else {
+            return this.update(ingredient);
+        }
+    }
+    
+    public Ingredient save(Ingredient ingredient) throws SQLException {
+        Connection connection = this.db.getConnection();
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO Ingredient (name) VALUES (?)");
+        statement.setString(1, ingredient.getName());
+        statement.executeUpdate();
+        
+        return ingredient;        
+    }
+    
+    public Ingredient update(Ingredient ingredient) throws SQLException {
+        Connection connection = this.db.getConnection();
+        PreparedStatement statement = connection.prepareStatement("UPDATE Ingredient name = (?) WHERE id = (?)");
+        statement.setString(1, ingredient.getName());
+        statement.setInt(2, ingredient.getId());
+        statement.executeUpdate();
+        
+        return ingredient;
     }
 
     @Override
-    public void delete(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void delete(Integer id) throws SQLException {
+        Connection connection = this.db.getConnection();
+        PreparedStatement statement = connection.prepareStatement("DELETE FROM Ingredient WHERE id = (?)");
+        statement.setInt(1, id);
+        statement.executeUpdate();
     }
 
 }

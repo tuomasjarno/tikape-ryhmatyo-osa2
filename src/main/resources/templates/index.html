@@ -4,13 +4,26 @@
         <title>Smoothies</title>
         <meta charset="utf-8"/>
     </head>
-    
+
     <body>
         <h1>Smoothie list</h1>
+   	 
         <ul>
             <li th:each="smoothie: ${smoothies}">
-                <span th:text="${smoothie.name}"></span>
+                <a th:href="@{smoothielist/{id}(id=${smoothie.id})}">
+                    <span th:text="${smoothie.name}"></span>
+                </a>
+            </li>
+        </ul>
+
+        <ul>
+            <li>
+                <a th:href="smoothies">Add new smoothies</a>
+            </li>
+            <li>
+                <a th:href="ingredients">Observe and add ingredients</a>
             </li>
         </ul>
     </body>
 </html>
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html SYSTEM "http://thymeleaf.org/dtd/xhtml1-strict-thymelef-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Ingredients</title>
+        <meta charset="utf-8"/>
+    </head>
+    
+    <body>
+        <h1>Ingredients</h1>
+
+        <ul>
+            <li th:each="ingredient: ${ingredients}">
+                <span th:text="${ingredient.name}"></span>
+                <a th:href="@{ingredients/{id}/delete(id=${ingredient.id})}">
+                <span th:text=" (delete)"></span>
+                </a>
+            </li>
+        </ul>
+	 
+        <h4>Add a new ingredient</h4>
+        <form method="POST" action="/addingredient">
+            <span>Ingredient:</span><br/>
+            <input type="text" name="ingredient"/><br/>
+            <input type="submit" value="Add"/>
+        </form>
+        <ul>
+            <li>
+                <a href="../">Back to Smoothie list</a>
+            </li>
+        </ul>
+    </body>
+</html>
+

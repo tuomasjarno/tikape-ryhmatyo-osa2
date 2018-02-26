@@ -27,17 +27,42 @@ public class SmoothieApplication {
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
 
-        Spark.get("/:id", (req, res) -> {
-            Map map = new HashMap<>();
+        Spark.get("/smoothielist/:id", (req, res) -> {
+            HashMap map = new HashMap<>();
             Integer smoothieId = Integer.parseInt(req.params(":id"));
-            
-            List<SmoothieIngredient> smoothieIngredients = siDao.findSmoothieIngredients(smoothieId);
-            List<Ingredient> ingredients = iDao.findSmoothieIngredients(smoothieIngredients);
+            map.put("smoothie", sDao.findOne(smoothieId));
+            map.put("ingredients", siDao.findOne(smoothieId));
 
-            map.put("ingredients", ingredients);
-            map.put("smoothieIngredients", smoothieIngredients);
-
-            return new ModelAndView(map, "html tiedoston nimi tahan");
+            return new ModelAndView(map, "id");
         }, new ThymeleafTemplateEngine());
+
+        Spark.get("/ingredients", (req, res) -> {
+            Map map = new HashMap<>();
+            map.put("ingredients", iDao.findAll());
+
+            return new ModelAndView(map, "ingredients");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/ingredients/:id/delete", (req, res) -> {	//deletes ingredient when called
+            Integer ingredientId = Integer.parseInt(req.params(":id"));
+            iDao.delete(ingredientId);
+            res.redirect("/ingredients");
+            return "";
+        });
+
+//    	Spark.post("/addsmoothies", (req, res) -> {   //Currently not in use by anything
+//        	String smoothie = req.queryParams("smoothie");
+//        	PreparedStatement stmt = db.getConnection().prepareStatement("INSERT INTO Smoothie (name) VALUES (?)");
+//        	stmt.setString(1, smoothie);
+//        	stmt.executeUpdate();
+//        	res.redirect("/smoothies");
+//        	return "";
+//    	});
+        Spark.post("/addingredient", (req, res) -> {	//adds given ingredient when called
+            String ingredientName = req.queryParams("ingredient");
+            iDao.saveOrUpdate(new Ingredient(iDao.findAll().size() + 1, ingredientName));
+            res.redirect("/ingredients");
+            return "";
+        });
     }
 }
