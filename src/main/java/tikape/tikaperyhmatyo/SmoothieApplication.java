@@ -30,8 +30,16 @@ public class SmoothieApplication {
         Spark.get("/smoothielist/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Integer smoothieId = Integer.parseInt(req.params(":id"));
-            map.put("smoothie", sDao.findOne(smoothieId));
-            map.put("ingredients", siDao.findOne(smoothieId));
+            /*map.put("smoothie", sDao.findOne(smoothieId));
+            map.put("ingredients", siDao.findOne(smoothieId));*/
+            
+            List<SmoothieIngredient> smoothieIngredients = siDao.findSmoothieIngredients(smoothieId);
+            List<Ingredient> ingredients = new ArrayList<>();
+            for (SmoothieIngredient si : smoothieIngredients) {
+                ingredients.add(iDao.findOne(si.getIngredientId()));
+            }
+            
+            map.put("ingredients", ingredients);
 
             return new ModelAndView(map, "id");
         }, new ThymeleafTemplateEngine());
