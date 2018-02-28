@@ -11,14 +11,14 @@
         <ul>
             <li th:each="ingredient: ${ingredients}">
                 <span th:text="${ingredient.name}"></span>
-                <a th:href="@{ingredients/{id}/delete(id=${ingredient.id})}">
-                <span th:text=" (delete)"></span>
-                </a>
+                (<a th:href="@{ingredients/{id}/delete(id=${ingredient.id})}">
+                <span th:text="delete"></span>
+                </a>)
             </li>
         </ul>
 	 
         <h4>Add a new ingredient</h4>
-        <form method="POST" action="/addingredient">
+        <form method="POST" action="/addingredients">
             <span>Ingredient:</span><br/>
             <input type="text" name="ingredient"/><br/>
             <input type="submit" value="Add"/>

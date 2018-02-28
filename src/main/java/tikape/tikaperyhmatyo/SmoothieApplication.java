@@ -30,16 +30,18 @@ public class SmoothieApplication {
         Spark.get("/smoothielist/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Integer smoothieId = Integer.parseInt(req.params(":id"));
-            /*map.put("smoothie", sDao.findOne(smoothieId));
-            map.put("ingredients", siDao.findOne(smoothieId));*/
+            map.put("smoothie", sDao.findOne(smoothieId));
+            /*map.put("ingredients", siDao.findOne(smoothieId));*/
             
             List<SmoothieIngredient> smoothieIngredients = siDao.findSmoothieIngredients(smoothieId);
-            List<Ingredient> ingredients = new ArrayList<>();
+            //List<Ingredient> ingredients = new ArrayList<>();
             for (SmoothieIngredient si : smoothieIngredients) {
-                ingredients.add(iDao.findOne(si.getIngredientId()));
+                //ingredients.add(iDao.findOne(si.getIngredientId()));
+                si.setIngredient(iDao.findOne(si.getIngredientId()));
             }
             
-            map.put("ingredients", ingredients);
+            //map.put("ingredients", ingredients);
+            map.put("smoothieingredients", smoothieIngredients);
 
             return new ModelAndView(map, "id");
         }, new ThymeleafTemplateEngine());
@@ -58,14 +60,6 @@ public class SmoothieApplication {
             return "";
         });
 
-//    	Spark.post("/addsmoothies", (req, res) -> {   //Currently not in use by anything
-//        	String smoothie = req.queryParams("smoothie");
-//        	PreparedStatement stmt = db.getConnection().prepareStatement("INSERT INTO Smoothie (name) VALUES (?)");
-//        	stmt.setString(1, smoothie);
-//        	stmt.executeUpdate();
-//        	res.redirect("/smoothies");
-//        	return "";
-//    	});
         Spark.post("/addingredient", (req, res) -> {	//adds given ingredient when called
             String ingredientName = req.queryParams("ingredient");
             iDao.saveOrUpdate(new Ingredient(iDao.findAll().size() + 1, ingredientName));

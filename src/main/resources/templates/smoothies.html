@@ -1,0 +1,55 @@
+<!DOCTYPE html SYSTEM "http://thymeleaf.org/dtd/xhtml1-strict-thymelef-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+    	<title>Smoothies</title>
+    	<meta charset="utf-8"/>
+	</head>
+    
+	<body>
+    	<h1>Smoothies</h1>
+    	<ul>
+        	<li th:each="smoothie: ${smoothies}">
+            	<a th:href="@{smoothielist/{id}(id=${smoothie.id})}">
+                	<span th:text="${smoothie.name}"></span>
+            	</a>
+            	(<a th:href="@{smoothies/{id}/delete(id=${smoothie.id})}">
+                	<span th:text="delete"></span>
+            	</a>)
+           	 
+        	</li>
+    	</ul>
+    	<h4>Add</h4>
+ 
+    	<form method="POST" action="/addsmoothie">
+        	Name of the smoothie:<br/>
+        	<input type="text" name="smoothie"/><br/>
+        	<input type="submit" value="Add"/>
+    	</form>
+    	<h4>Add ingredients</h4>
+    	<form method="POST" action="/addsi">
+        	Smoothie:<br/>
+        	<select name="smoothieId">
+            	<option th:each="smoothie: ${smoothies}" th:value="${smoothie.id}" th:text="${smoothie.name}"></option>
+        	</select>
+        	<br/>
+        	Ingredient<br/>
+        	<select name="ingredientId">
+            	<option th:each="ingredient: ${ingredients}" th:value="${ingredient.id}" th:text="${ingredient.name}"></option>
+        	</select>
+        	<br/>
+        	Order<br/>
+        	<input name="order" type="text"/><br/>
+        	Quantity<br/>
+        	<input name="quantity" type="text"/><br/>
+        	Recipe<br/>
+        	<input name="recipe" type="text"/><br/>
+        	<input type="submit" value="Add"/>
+    	</form>
+    	<ul>
+        	<li>
+            	<a href="../">Back to Smoothie list</a>
+        	</li>
+    	</ul>
+	</body>
+</html>
+

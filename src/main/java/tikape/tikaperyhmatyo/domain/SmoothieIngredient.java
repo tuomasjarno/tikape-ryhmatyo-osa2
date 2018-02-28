@@ -7,13 +7,16 @@ public class SmoothieIngredient {
     private Integer orderOf;
     private String quantity;
     private String recipe;
+    private Ingredient ingredient;
     
+    //Ingredient ingredient oli aiemmin Integer ingredientId
     public SmoothieIngredient(Integer smoothieId, Integer ingredientId, Integer orderOf, String quantity, String recipe) {
         this.smoothieId = smoothieId;
         this.ingredientId = ingredientId;
         this.orderOf = orderOf;
         this.quantity = quantity;
         this.recipe = recipe;
+        this.ingredient = null;
     }
 
     public Integer getSmoothieId() {
@@ -56,5 +59,12 @@ public class SmoothieIngredient {
         this.recipe = recipe;
     }
     
+    public Ingredient getIngredient() {
+        return this.ingredient;
+    }
+    
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
+    }   
     
 }
