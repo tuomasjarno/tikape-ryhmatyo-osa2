@@ -15,6 +15,10 @@ import tikape.tikaperyhmatyo.domain.SmoothieIngredient;
 public class SmoothieApplication {
 
     public static void main(String[] args) {
+        if (System.getenv("PORT") != null) {
+            Spark.port(Integer.valueOf(System.getenv("PORT")));
+        }
+
         Database db = new Database("jdbc:sqlite:smoothies.db");
         SmoothieDao sDao = new SmoothieDao(db);
         IngredientDao iDao = new IngredientDao(db);
@@ -73,21 +77,42 @@ public class SmoothieApplication {
             return "";
         });
 
+        Spark.get("/serror", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "serror");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/ierror", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "ierror");
+        }, new ThymeleafTemplateEngine());
+
         Spark.post("/addsmoothie", (req, res) -> {
+            Map map = new HashMap<>();
             String smoothieName = req.queryParams("smoothie");
+
             if (sDao.isItFreeToUse(smoothieName)) {
                 sDao.saveOrUpdate(new Smoothie(sDao.findAll().size() + 1, smoothieName));
+                res.redirect("/smoothies");
+            } else {
+                res.redirect("/serror");
             }
-            res.redirect("/smoothies");
+
             return "";
         });
 
         Spark.post("/addingredients", (req, res) -> {
             String ingredientName = req.queryParams("ingredient");
+
             if (iDao.isItFreeToUse(ingredientName)) {
                 iDao.saveOrUpdate(new Ingredient(iDao.findAll().size() + 1, ingredientName));
+                res.redirect("/ingredients");
+            } else {
+                res.redirect("/ierror");
             }
-            res.redirect("/ingredients");
+
             return "";
         });
 
@@ -97,9 +122,9 @@ public class SmoothieApplication {
             Integer order = Integer.parseInt(req.queryParams("order").trim());
             String quantity = req.queryParams("quantity");
             String recipe = req.queryParams("recipe");
-            
+
             siDao.saveOrUpdate(new SmoothieIngredient(smoothieId, ingredientId, order, quantity, recipe));
-            
+
             res.redirect("/smoothies");
             return "";
         });
