@@ -92,5 +92,15 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         statement.setInt(1, id);
         statement.executeUpdate();
     }
-
+    
+    public Boolean isItFreeToUse(String ingredientName) throws SQLException {
+        List<Ingredient> ingredients = this.findAll();
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.getName().equals(ingredientName)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }

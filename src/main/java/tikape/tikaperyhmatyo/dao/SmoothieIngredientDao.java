@@ -20,12 +20,12 @@ public class SmoothieIngredientDao implements Dao<SmoothieIngredient, Integer> {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM SmoothieIngredient WHERE smoothie_id = (?)");
             statement.setInt(1, smoothieId);
             ResultSet rs = statement.executeQuery();
-            
+
             if (rs.next()) {
                 si = new SmoothieIngredient(smoothieId, rs.getInt("ingredient_id"), rs.getInt("order_of"), rs.getString("quantity"), rs.getString("recipe"));
             }
         }
-        
+
         return si;
     }
 
@@ -67,7 +67,7 @@ public class SmoothieIngredientDao implements Dao<SmoothieIngredient, Integer> {
             statement.setInt(3, object.getOrderOf());
             statement.setString(4, object.getQuantity());
             statement.setString(5, object.getRecipe());
-            
+
             statement.executeUpdate();
         }
 
@@ -75,8 +75,11 @@ public class SmoothieIngredientDao implements Dao<SmoothieIngredient, Integer> {
     }
 
     @Override
-    public void delete(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void delete(Integer smoothieId) throws SQLException {
+        Connection connection = this.db.getConnection();
+        PreparedStatement statement = connection.prepareStatement("DELETE FROM SmoothieIngredient WHERE smoothie_id = (?)");
+        statement.setInt(1, smoothieId);
+        statement.executeUpdate();
     }
 
 }

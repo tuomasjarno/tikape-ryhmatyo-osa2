@@ -10,8 +10,8 @@
    	 
     	<ul>
         	<li th:each="smoothieingredient: ${smoothieingredients}">
-                    <span th:text="${smoothieingredient.ingredient.name}"></span>
-                    <span th:text="${smoothieingredient.quantity}"><span>, </span></span>
+                    <span th:text="${smoothieingredient.ingredient.name}"></span>,
+                    <span th:text="${smoothieingredient.quantity}"><span>, </span></span>,
                     <span th:text="${smoothieingredient.recipe}"></span>
         	</li>
     	</ul>

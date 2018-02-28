@@ -90,4 +90,14 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         statement.executeUpdate();
     }
 
+    public Boolean isItFreeToUse(String smoothieName) throws SQLException {
+        List<Smoothie> smoothies = this.findAll();
+        for (Smoothie smoothie : smoothies) {
+            if (smoothie.getName().equals(smoothieName)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }
