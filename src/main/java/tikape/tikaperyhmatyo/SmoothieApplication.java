@@ -33,6 +33,7 @@ public class SmoothieApplication {
             map.put("smoothie", sDao.findOne(smoothieId));
 
             List<SmoothieIngredient> smoothieIngredients = siDao.findSmoothieIngredients(smoothieId);
+            smoothieIngredients.sort((s1, s2) -> s1.getOrderOf().compareTo(s2.getOrderOf()));
             for (SmoothieIngredient si : smoothieIngredients) {
                 si.setIngredient(iDao.findOne(si.getIngredientId()));
             }
