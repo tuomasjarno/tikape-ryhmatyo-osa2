@@ -31,19 +31,23 @@ public class SmoothieApplication {
             HashMap map = new HashMap<>();
             Integer smoothieId = Integer.parseInt(req.params(":id"));
             map.put("smoothie", sDao.findOne(smoothieId));
-            /*map.put("ingredients", siDao.findOne(smoothieId));*/
-            
+
             List<SmoothieIngredient> smoothieIngredients = siDao.findSmoothieIngredients(smoothieId);
-            //List<Ingredient> ingredients = new ArrayList<>();
             for (SmoothieIngredient si : smoothieIngredients) {
-                //ingredients.add(iDao.findOne(si.getIngredientId()));
                 si.setIngredient(iDao.findOne(si.getIngredientId()));
             }
-            
-            //map.put("ingredients", ingredients);
+
             map.put("smoothieingredients", smoothieIngredients);
 
             return new ModelAndView(map, "id");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/smoothies", (req, res) -> {
+            Map map = new HashMap<>();
+            map.put("smoothies", sDao.findAll());
+            map.put("ingredients", iDao.findAll());
+
+            return new ModelAndView(map, "smoothies");
         }, new ThymeleafTemplateEngine());
 
         Spark.get("/ingredients", (req, res) -> {
@@ -53,10 +57,24 @@ public class SmoothieApplication {
             return new ModelAndView(map, "ingredients");
         }, new ThymeleafTemplateEngine());
 
+        Spark.get("/smoothies/:id/delete", (req, res) -> {
+            Integer smoothieId = Integer.parseInt(req.params(":id"));
+            sDao.delete(smoothieId);
+            res.redirect("/smoothies");
+            return "";
+        });
+
         Spark.get("/ingredients/:id/delete", (req, res) -> {	//deletes ingredient when called
             Integer ingredientId = Integer.parseInt(req.params(":id"));
             iDao.delete(ingredientId);
             res.redirect("/ingredients");
+            return "";
+        });
+
+        Spark.post("/addsmoothie", (req, res) -> {
+            String smoothieName = req.queryParams("smoothie");
+            sDao.saveOrUpdate(new Smoothie(sDao.findAll().size() + 1, smoothieName));
+            res.redirect("/smoothies");
             return "";
         });
 
@@ -66,5 +84,17 @@ public class SmoothieApplication {
             res.redirect("/ingredients");
             return "";
         });
+
+        Spark.post("/addsi", (req, res) -> {
+            int smoothieId = Integer.parseInt(req.queryParams("smoothieId"));
+            int ingredientId = Integer.parseInt(req.queryParams("ingredientId"));
+            int order = Integer.parseInt(req.queryParams("order"));
+            String quantity = req.queryParams("quantity");
+            String recipe = req.queryParams("recipe");
+            siDao.saveOrUpdate(new SmoothieIngredient(smoothieId, ingredientId, order, quantity, recipe));
+            res.redirect("/smoothies");
+            return "";
+        });
     }
+
 }
