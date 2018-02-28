@@ -84,10 +84,11 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
 
     @Override
     public void delete(Integer id) throws SQLException {
-        Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM Smoothie WHERE id = (?)");
-        statement.setInt(1, id);
-        statement.executeUpdate();
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Smoothie WHERE id = (?)");
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        }
     }
 
     public Boolean isItFreeToUse(String smoothieName) throws SQLException {
@@ -97,7 +98,7 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
                 return false;
             }
         }
-        
+
         return true;
     }
 }

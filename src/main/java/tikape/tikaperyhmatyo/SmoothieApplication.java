@@ -26,6 +26,7 @@ public class SmoothieApplication {
         IngredientDao iDao = new IngredientDao(db);
         SmoothieIngredientDao siDao = new SmoothieIngredientDao(db);
 
+        // index page
         Spark.get("/", (req, res) -> {
             Map map = new HashMap<>();
             map.put("smoothies", sDao.findAll());
@@ -33,6 +34,7 @@ public class SmoothieApplication {
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
 
+        // smoothies by their id
         Spark.get("/smoothielist/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Integer smoothieId = Integer.parseInt(req.params(":id"));
@@ -49,6 +51,7 @@ public class SmoothieApplication {
             return new ModelAndView(map, "id");
         }, new ThymeleafTemplateEngine());
 
+        // all smoothies
         Spark.get("/smoothies", (req, res) -> {
             Map map = new HashMap<>();
             map.put("smoothies", sDao.findAll());
@@ -57,6 +60,7 @@ public class SmoothieApplication {
             return new ModelAndView(map, "smoothies");
         }, new ThymeleafTemplateEngine());
 
+        // all ingredients
         Spark.get("/ingredients", (req, res) -> {
             Map map = new HashMap<>();
 
@@ -70,14 +74,17 @@ public class SmoothieApplication {
             return new ModelAndView(map, "ingredients");
         }, new ThymeleafTemplateEngine());
 
+        // deletes given smoothie by its id
         Spark.get("/smoothies/:id/delete", (req, res) -> {
             Integer smoothieId = Integer.parseInt(req.params(":id"));
-            sDao.delete(smoothieId);
             siDao.delete(smoothieId);
+            sDao.delete(smoothieId);
+
             res.redirect("/smoothies");
             return "";
         });
 
+        // deletes given ingredient by its id
         Spark.get("/ingredients/:id/delete", (req, res) -> {	//deletes ingredient when called
             Integer ingredientId = Integer.parseInt(req.params(":id"));
             iDao.delete(ingredientId);
@@ -85,42 +92,49 @@ public class SmoothieApplication {
             return "";
         });
 
+        // returns serror.html, which = smoothie name already in use
         Spark.get("/serror", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "serror");
         }, new ThymeleafTemplateEngine());
 
+        // returns ierror.html, which = ingredient name already in use
         Spark.get("/ierror", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "ierror");
         }, new ThymeleafTemplateEngine());
 
+        // returns sierror.html, which = value given to order field was incorrect, e.g. non integer value
         Spark.get("/sierror", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "sierror");
         }, new ThymeleafTemplateEngine());
 
+        // returns sempty.html, which = smoothie name field was empty
         Spark.get("/sempty", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "sempty");
         }, new ThymeleafTemplateEngine());
 
+        // returns iempty.html, which = ingredient name field was empty
         Spark.get("/iempty", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "iempty");
         }, new ThymeleafTemplateEngine());
 
+        // returns siempty.html, which = order or quantity field was empty
         Spark.get("/siempty", (req, res) -> {
             Map map = new HashMap<>();
 
             return new ModelAndView(map, "siempty");
         }, new ThymeleafTemplateEngine());
 
+        // adds smoothie into db
         Spark.post("/addsmoothie", (req, res) -> {
             Map map = new HashMap<>();
             String smoothieName = req.queryParams("smoothie").trim();
@@ -138,6 +152,7 @@ public class SmoothieApplication {
             return "";
         });
 
+        // adds ingredient into db
         Spark.post("/addingredients", (req, res) -> {
             String ingredientName = req.queryParams("ingredient").trim();
 
@@ -154,6 +169,7 @@ public class SmoothieApplication {
             return "";
         });
 
+        // adds smoothie ingredient into db
         Spark.post("/addsi", (req, res) -> {
             Integer smoothieId = Integer.parseInt(req.queryParams("smoothieId"));
             Integer ingredientId = Integer.parseInt(req.queryParams("ingredientId"));
