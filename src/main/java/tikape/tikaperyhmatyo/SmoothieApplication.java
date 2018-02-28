@@ -177,7 +177,7 @@ public class SmoothieApplication {
             String quantity = req.queryParams("quantity").trim();
             String recipe = req.queryParams("recipe").trim();
 
-            if (orderString.isEmpty() | quantity.isEmpty() | recipe.isEmpty()) {
+            if (orderString.isEmpty() | quantity.isEmpty()) {
                 res.redirect("/siempty");
             } else {
                 Integer order = Integer.parseInt(orderString);
