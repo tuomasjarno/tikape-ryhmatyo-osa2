@@ -1,5 +1,6 @@
 package tikape.tikaperyhmatyo;
 
+import java.sql.*;
 import java.util.*;
 import spark.ModelAndView;
 import spark.Spark;
@@ -18,8 +19,9 @@ public class SmoothieApplication {
         if (System.getenv("PORT") != null) {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
-
-        Database db = new Database("jdbc:sqlite:smoothies.db");
+        
+        String dbAddress = System.getenv("JDBC_DATABASE_URL");
+        Database db = new Database(dbAddress);
         SmoothieDao sDao = new SmoothieDao(db);
         IngredientDao iDao = new IngredientDao(db);
         SmoothieIngredientDao siDao = new SmoothieIngredientDao(db);
@@ -128,6 +130,15 @@ public class SmoothieApplication {
             res.redirect("/smoothies");
             return "";
         });
+    }
+
+    public static Connection getConnection() throws Exception {
+        String dbUrl = System.getenv("JDBC_DATABASE_URL");
+        if (dbUrl != null && dbUrl.length() > 0) {
+            return DriverManager.getConnection(dbUrl);
+        }
+
+        return DriverManager.getConnection("jdbc:sqlite:smoothies.db");
     }
 
 }
