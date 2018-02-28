@@ -1,15 +1,15 @@
-
 package tikape.tikaperyhmatyo.domain;
 
 public class Ingredient {
+
     private Integer id;
     private String name;
-    private Integer numberofuses;
-    
+    private String numberofuses;
+
     public Ingredient(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.numberofuses = 0;
+        this.numberofuses = "used in 0 smoothies";
     }
 
     public Integer getId() {
@@ -27,17 +27,13 @@ public class Ingredient {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public Integer getNumberofUses() {
+
+    public void setNumberOfUses(Integer numberOfUses) {
+        this.numberofuses = "used in " + numberOfUses.toString() + " smoothies";
+    }
+
+    public String getNumberOfUses() {
         return this.numberofuses;
     }
-    
-    public void increaseNumberOfUses() {
-        this.numberofuses++;
-    }
-    
-    public void decreaseNumberOfUses() {
-        this.numberofuses--;
-    }
-    
+
 }

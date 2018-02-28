@@ -23,9 +23,11 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 ingredient = new Ingredient(rs.getInt("id"), rs.getString("name"));
-            } 
+            }
+
+            connection.close();
         }
-        
+
         return ingredient;
     }
 
@@ -38,8 +40,11 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             while (rs.next()) {
                 ingredients.add(new Ingredient(rs.getInt("id"), rs.getString("name")));
             }
+
+            rs.close();
+            connection.close();
         }
-        //muista lisätä connection.close() jne
+
         return ingredients;
     }
 
@@ -52,6 +57,8 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
                     ingredients.add(this.findOne(si.getIngredientId()));
                 }
             }
+
+            connection.close();
         }
 
         return ingredients;
@@ -65,34 +72,37 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             return this.update(ingredient);
         }
     }
-    
+
     public Ingredient save(Ingredient ingredient) throws SQLException {
-        Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO Ingredient (name) VALUES (?)");
-        statement.setString(1, ingredient.getName());
-        statement.executeUpdate();
-        
-        return ingredient;        
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Ingredient (name) VALUES (?)");
+            statement.setString(1, ingredient.getName());
+            statement.executeUpdate();
+        }
+
+        return ingredient;
     }
-    
+
     public Ingredient update(Ingredient ingredient) throws SQLException {
-        Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("UPDATE Ingredient name = (?) WHERE id = (?)");
-        statement.setString(1, ingredient.getName());
-        statement.setInt(2, ingredient.getId());
-        statement.executeUpdate();
-        
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE Ingredient name = (?) WHERE id = (?)");
+            statement.setString(1, ingredient.getName());
+            statement.setInt(2, ingredient.getId());
+            statement.executeUpdate();
+        }
+
         return ingredient;
     }
 
     @Override
     public void delete(Integer id) throws SQLException {
-        Connection connection = this.db.getConnection();
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM Ingredient WHERE id = (?)");
-        statement.setInt(1, id);
-        statement.executeUpdate();
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Ingredient WHERE id = (?)");
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        }
     }
-    
+
     public Boolean isItFreeToUse(String ingredientName) throws SQLException {
         List<Ingredient> ingredients = this.findAll();
         for (Ingredient ingredient : ingredients) {
@@ -100,7 +110,24 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
                 return false;
             }
         }
-        
+
         return true;
     }
+
+    public Integer numberOfUses(Integer id) throws SQLException {
+        Integer numberOfUses = 0;
+
+        try (Connection connection = this.db.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT COUNT(smoothie_id) as total FROM SmoothieIngredient WHERE ingredient_id = (?)");
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                numberOfUses = rs.getInt("total");
+            }
+        }
+
+        return numberOfUses;
+    }
+
 }

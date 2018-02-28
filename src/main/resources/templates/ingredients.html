@@ -12,7 +12,7 @@
             <li th:each="ingredient: ${ingredients}">
                 <span th:text="${ingredient.name}"></span>
                 <span th:text="${ingredient.numberofuses}"></span>
-                <a th:href="@{ingredients/{id}/delete(id=${ingredient.id})}">
+                (<a th:href="@{ingredients/{id}/delete(id=${ingredient.id})}">
                 <span th:text="delete"></span>
                 </a>)
             </li>

@@ -19,7 +19,7 @@ public class SmoothieApplication {
         if (System.getenv("PORT") != null) {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
-        
+
         String dbAddress = System.getenv("JDBC_DATABASE_URL");
         Database db = new Database(dbAddress);
         SmoothieDao sDao = new SmoothieDao(db);
@@ -59,8 +59,14 @@ public class SmoothieApplication {
 
         Spark.get("/ingredients", (req, res) -> {
             Map map = new HashMap<>();
-            map.put("ingredients", iDao.findAll());
-            
+
+            List<Ingredient> ingredients = iDao.findAll();
+            for (Ingredient ingredient : ingredients) {
+                Integer numberOfUses = iDao.numberOfUses(ingredient.getId());
+                ingredient.setNumberOfUses(numberOfUses);
+            }
+
+            map.put("ingredients", ingredients);
             return new ModelAndView(map, "ingredients");
         }, new ThymeleafTemplateEngine());
 
@@ -91,44 +97,79 @@ public class SmoothieApplication {
             return new ModelAndView(map, "ierror");
         }, new ThymeleafTemplateEngine());
 
+        Spark.get("/sierror", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "sierror");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/sempty", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "sempty");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/iempty", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "iempty");
+        }, new ThymeleafTemplateEngine());
+
+        Spark.get("/siempty", (req, res) -> {
+            Map map = new HashMap<>();
+
+            return new ModelAndView(map, "siempty");
+        }, new ThymeleafTemplateEngine());
+
         Spark.post("/addsmoothie", (req, res) -> {
             Map map = new HashMap<>();
-            String smoothieName = req.queryParams("smoothie");
+            String smoothieName = req.queryParams("smoothie").trim();
 
-            if (sDao.isItFreeToUse(smoothieName)) {
-                sDao.saveOrUpdate(new Smoothie(sDao.findAll().size() + 1, smoothieName));
-                res.redirect("/smoothies");
+            if (smoothieName.isEmpty()) {
+                res.redirect("/sempty");
             } else {
-                res.redirect("/serror");
+                if (sDao.isItFreeToUse(smoothieName)) {
+                    sDao.saveOrUpdate(new Smoothie(sDao.findAll().size() + 1, smoothieName));
+                    res.redirect("/smoothies");
+                } else {
+                    res.redirect("/serror");
+                }
             }
-
             return "";
         });
 
         Spark.post("/addingredients", (req, res) -> {
-            String ingredientName = req.queryParams("ingredient");
+            String ingredientName = req.queryParams("ingredient").trim();
 
-            if (iDao.isItFreeToUse(ingredientName)) {
-                iDao.saveOrUpdate(new Ingredient(iDao.findAll().size() + 1, ingredientName));
-                res.redirect("/ingredients");
+            if (ingredientName.isEmpty()) {
+                res.redirect("/iempty");
             } else {
-                res.redirect("/ierror");
+                if (iDao.isItFreeToUse(ingredientName)) {
+                    iDao.saveOrUpdate(new Ingredient(iDao.findAll().size() + 1, ingredientName));
+                    res.redirect("/ingredients");
+                } else {
+                    res.redirect("/ierror");
+                }
             }
-
             return "";
         });
 
         Spark.post("/addsi", (req, res) -> {
             Integer smoothieId = Integer.parseInt(req.queryParams("smoothieId"));
             Integer ingredientId = Integer.parseInt(req.queryParams("ingredientId"));
-            Integer order = Integer.parseInt(req.queryParams("order").trim());
-            String quantity = req.queryParams("quantity");
-            String recipe = req.queryParams("recipe");
+            String orderString = req.queryParams("order").trim();
+            String quantity = req.queryParams("quantity").trim();
+            String recipe = req.queryParams("recipe").trim();
 
-            siDao.saveOrUpdate(new SmoothieIngredient(smoothieId, ingredientId, order, quantity, recipe));
-            iDao.findOne(ingredientId).increaseNumberOfUses();
+            if (orderString.isEmpty() | quantity.isEmpty() | recipe.isEmpty()) {
+                res.redirect("/siempty");
+            } else {
+                Integer order = Integer.parseInt(orderString);
 
-            res.redirect("/smoothies");
+                siDao.saveOrUpdate(new SmoothieIngredient(smoothieId, ingredientId, order, quantity, recipe));
+
+                res.redirect("/smoothies");
+            }
             return "";
         });
     }
